@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use async_trait::async_trait;
 use chrono::{Datelike, TimeZone};
-use chronoutil::RelativeDuration;
 use sqlx::{postgres::PgPoolOptions, Result};
 
 use sqlx::Row;
@@ -213,7 +212,7 @@ impl Database for Postgres {
     #[instrument(skip_all)]
     async fn count_history_year(&self, user: &User, year: i32) -> Result<i64> {
         let start = chrono::Utc.ymd(year, 1, 1).and_hms_nano(0, 0, 0, 0);
-        let end = start + RelativeDuration::years(1);
+        let end = chrono::Utc.ymd(year+1, 1, 1).and_hms_nano(0, 0, 0, 0);
 
         let res = self
             .count_history_range(user, start.naive_utc(), end.naive_utc())

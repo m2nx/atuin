@@ -50,7 +50,7 @@ atuin-common = { path = "atuin-common", version = "13.0.1" }
 
 log = "0.4"
 env_logger = "0.10.0"
-chrono = { version = "0.4", features = ["serde"] }
+chrono = { version = "0.4.24", default-features = false, features = ["serde"] }
 eyre = "0.6"
 directories = "4"
 indicatif = "0.17.1"
@@ -62,7 +62,7 @@ itertools = "0.10.5"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1.58"
 interim = { version = "0.1.0", features = ["chrono"] }
-base64 = "0.20.0"
+base64 = "0.13.1"
 crossbeam-channel = "0.5.1"
 clap = { version = "4.0.18", features = ["derive"] }
 clap_complete = "4.0.3"
