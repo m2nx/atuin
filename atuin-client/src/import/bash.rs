@@ -1,10 +1,10 @@
 use std::{fs::File, io::Read, path::PathBuf, str};
 
 use async_trait::async_trait;
-use chrono::{DateTime, Duration, NaiveDateTime, Utc};
 use directories::UserDirs;
 use eyre::{eyre, Result};
 use itertools::Itertools;
+use time::{Duration, OffsetDateTime};
 
 use super::{get_histpath, unix_byte_lines, Importer, Loader};
 use crate::history::History;
@@ -55,7 +55,7 @@ impl Importer for Bash {
                 _ => None,
             })
             // if no known timestamps, use now as base
-            .unwrap_or((lines.len(), Utc::now()));
+            .unwrap_or((lines.len(), OffsetDateTime::now_utc()));
 
         // if no timestamp is recorded, then use this increment to set an arbitrary timestamp
         // to preserve ordering
@@ -95,7 +95,7 @@ enum LineType<'a> {
     NotUtf8,
     /// A timestamp line start with a '#', followed immediately by an integer
     /// that represents seconds since UNIX epoch.
-    Timestamp(DateTime<Utc>),
+    Timestamp(OffsetDateTime),
     /// Anything that doesn't look like a timestamp.
     Command(&'a str),
 }
@@ -112,10 +112,9 @@ impl<'a> From<&'a [u8]> for LineType<'a> {
     }
 }
 
-fn try_parse_line_as_timestamp(line: &str) -> Option<DateTime<Utc>> {
+fn try_parse_line_as_timestamp(line: &str) -> Option<OffsetDateTime> {
     let seconds = line.strip_prefix('#')?.parse().ok()?;
-    let time = NaiveDateTime::from_timestamp(seconds, 0);
-    Some(DateTime::from_utc(time, Utc))
+    OffsetDateTime::from_unix_timestamp(seconds).ok()
 }
 
 #[cfg(test)]
@@ -152,7 +151,7 @@ cargo :b̷i̶t̴r̵o̴t̴ ̵i̷s̴ ̷r̶e̵a̸l̷
             ],
         );
         assert!(is_strictly_sorted(
-            loader.buf.iter().map(|h| h.timestamp.timestamp())
+            loader.buf.iter().map(|h| h.timestamp.unix_timestamp())
         ))
     }
 
@@ -178,7 +177,7 @@ cd ../
             ["git reset", "git clean -dxf", "cd ../"],
         );
         assert_equal(
-            loader.buf.iter().map(|h| h.timestamp.timestamp()),
+            loader.buf.iter().map(|h| h.timestamp.unix_timestamp()),
             [1672918999, 1672919006, 1672919020],
         )
     }
@@ -203,7 +202,7 @@ cd ../
             ["git reset", "git clean -dxf", "cd ../"],
         );
         assert!(is_strictly_sorted(
-            loader.buf.iter().map(|h| h.timestamp.timestamp())
+            loader.buf.iter().map(|h| h.timestamp.unix_timestamp())
         ))
     }
 

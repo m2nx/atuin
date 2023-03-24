@@ -1,6 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-use chrono::{prelude::*, Duration};
 use clap::Parser;
 use crossterm::style::{Color, ResetColor, SetAttribute, SetForegroundColor};
 use eyre::{bail, Result};
@@ -11,6 +10,7 @@ use atuin_client::{
     history::History,
     settings::{FilterMode, Settings},
 };
+use time::{Duration, OffsetDateTime};
 
 #[derive(Parser)]
 #[command(infer_subcommands = true)]
@@ -83,9 +83,13 @@ impl Cmd {
         let history = if words.as_str() == "all" {
             db.list(FilterMode::Global, &context, None, false).await?
         } else {
-            let start = parse_date_string(&words, Local::now(), settings.dialect.into())?;
+            let start = parse_date_string(
+                &words,
+                OffsetDateTime::now_local()?,
+                settings.dialect.into(),
+            )?;
             let end = start + Duration::days(1);
-            db.range(start.into(), end.into()).await?
+            db.range(start, end).await?
         };
         compute_stats(&history, self.count)?;
         Ok(())

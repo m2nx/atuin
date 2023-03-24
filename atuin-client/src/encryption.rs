@@ -125,6 +125,7 @@ pub fn decrypt(encrypted_history: &EncryptedHistory, key: &secretbox::Key) -> Re
 #[cfg(test)]
 mod test {
     use sodiumoxide::crypto::secretbox;
+    use time::OffsetDateTime;
 
     use crate::history::History;
 
@@ -136,7 +137,7 @@ mod test {
         let key2 = secretbox::gen_key();
 
         let history = History::new(
-            chrono::Utc::now(),
+            OffsetDateTime::now_utc(),
             "ls".to_string(),
             "/home/ellie".to_string(),
             0,

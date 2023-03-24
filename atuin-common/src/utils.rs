@@ -1,7 +1,6 @@
 use std::env;
 use std::path::PathBuf;
 
-use chrono::{Months, NaiveDate};
 use uuid::Uuid;
 
 pub fn uuid_v4() -> String {
@@ -48,14 +47,10 @@ pub fn get_current_dir() -> String {
     }
 }
 
-pub fn get_days_from_month(year: i32, month: u32) -> i64 {
-    let Some(start) = NaiveDate::from_ymd_opt(year, month, 1) else { return 30 };
-    let Some(end) = start.checked_add_months(Months::new(1)) else { return 30 };
-    end.signed_duration_since(start).num_days()
-}
-
 #[cfg(test)]
 mod tests {
+    use time::Month;
+
     use super::*;
     use std::env;
 
@@ -101,20 +96,20 @@ mod tests {
 
     #[test]
     fn days_from_month() {
-        assert_eq!(get_days_from_month(2023, 1), 31);
-        assert_eq!(get_days_from_month(2023, 2), 28);
-        assert_eq!(get_days_from_month(2023, 3), 31);
-        assert_eq!(get_days_from_month(2023, 4), 30);
-        assert_eq!(get_days_from_month(2023, 5), 31);
-        assert_eq!(get_days_from_month(2023, 6), 30);
-        assert_eq!(get_days_from_month(2023, 7), 31);
-        assert_eq!(get_days_from_month(2023, 8), 31);
-        assert_eq!(get_days_from_month(2023, 9), 30);
-        assert_eq!(get_days_from_month(2023, 10), 31);
-        assert_eq!(get_days_from_month(2023, 11), 30);
-        assert_eq!(get_days_from_month(2023, 12), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::January), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::February), 28);
+        assert_eq!(time::util::days_in_year_month(2023, Month::March), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::April), 30);
+        assert_eq!(time::util::days_in_year_month(2023, Month::May), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::June), 30);
+        assert_eq!(time::util::days_in_year_month(2023, Month::July), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::August), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::September), 30);
+        assert_eq!(time::util::days_in_year_month(2023, Month::October), 31);
+        assert_eq!(time::util::days_in_year_month(2023, Month::November), 30);
+        assert_eq!(time::util::days_in_year_month(2023, Month::December), 31);
 
         // leap years
-        assert_eq!(get_days_from_month(2024, 2), 29);
+        assert_eq!(time::util::days_in_year_month(2024, Month::February), 29);
     }
 }

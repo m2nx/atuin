@@ -1,6 +1,6 @@
-use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
+use time::OffsetDateTime;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserResponse {
@@ -33,7 +33,7 @@ pub struct LoginResponse {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddHistoryRequest {
     pub id: String,
-    pub timestamp: chrono::DateTime<Utc>,
+    pub timestamp: OffsetDateTime,
     pub data: String,
     pub hostname: String,
 }
@@ -45,8 +45,8 @@ pub struct CountResponse {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SyncHistoryRequest {
-    pub sync_ts: chrono::DateTime<chrono::FixedOffset>,
-    pub history_ts: chrono::DateTime<chrono::FixedOffset>,
+    pub sync_ts: OffsetDateTime,
+    pub history_ts: OffsetDateTime,
     pub host: String,
 }
 
