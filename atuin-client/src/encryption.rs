@@ -74,7 +74,7 @@ pub fn load_encoded_key(settings: &Settings) -> Result<String> {
 }
 
 pub fn encode_key(key: &Key) -> Result<String> {
-    let buf = rmp_serde::to_vec(key).wrap_err("could not encode key to message pack")?;
+    let buf = rmp_serde::to_vec(key.as_slice()).wrap_err("could not encode key to message pack")?;
     let buf = base64::encode(buf);
 
     Ok(buf)
@@ -83,10 +83,10 @@ pub fn encode_key(key: &Key) -> Result<String> {
 pub fn decode_key(key: String) -> Result<Key> {
     let buf =
         base64::decode(key.trim_end()).wrap_err("encryption key is not a valid base64 encoding")?;
-    let buf: [u8; 32] = rmp_serde::from_slice(&buf)
+    let buf: &[u8] = rmp_serde::from_slice(&buf)
         .wrap_err("encryption key is not a valid message pack encoding")?;
 
-    Ok(buf.into())
+    Ok(*Key::from_slice(buf))
 }
 
 pub fn encrypt(history: &History, key: &Key) -> Result<EncryptedHistory> {
