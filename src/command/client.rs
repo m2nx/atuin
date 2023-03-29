@@ -9,6 +9,7 @@ use env_logger::Builder;
 #[cfg(feature = "sync")]
 mod sync;
 
+mod daemon;
 mod history;
 mod import;
 mod search;
@@ -34,6 +35,8 @@ pub enum Cmd {
     #[cfg(feature = "sync")]
     #[command(flatten)]
     Sync(sync::Cmd),
+
+    Daemon,
 }
 
 impl Cmd {
@@ -56,6 +59,7 @@ impl Cmd {
             Self::Search(search) => search.run(db, &mut settings).await,
             #[cfg(feature = "sync")]
             Self::Sync(sync) => sync.run(settings, &mut db).await,
+            Self::Daemon => daemon::start(settings),
         }
     }
 }
