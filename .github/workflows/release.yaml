@@ -36,6 +36,8 @@ jobs:
           arm-unknown-linux-gnueabihf) sudo apt-get -y update ; sudo apt-get -y install gcc-arm-linux-gnueabihf ;;
           aarch64-unknown-linux-gnu) sudo apt-get -y update ; sudo apt-get -y install gcc-aarch64-linux-gnu qemu-user;;
           x86_64-unknown-linux-musl) sudo apt-get -y update ; sudo apt-get -y install musl-tools ;;
+          aarch64-apple-darwin) sudo apt-get -y update ; sudo apt-get -y install qemu-user ;;
+
         esac
 
     - name: Extract crate information
