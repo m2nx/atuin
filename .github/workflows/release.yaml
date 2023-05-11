@@ -130,7 +130,8 @@ jobs:
 
         QEMU_PREFIX=""
         case ${{ matrix.job.target }} in
-          aarch64-unknown-linux-gnu) QEMU_PREFIX="qemu-aarch64 -L /usr/aarch64-linux-gnu" ;;
+          *aarch64*) QEMU_PREFIX="qemu-aarch64 -L /usr/aarch64-linux-gnu" ;;
+
         esac;
 
         # Shell completions
